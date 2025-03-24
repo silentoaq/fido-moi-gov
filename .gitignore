@@ -1,5 +1,4 @@
-# .gitignore
-keys/private.pem        
-keys/key.jwk            
-instance/fido.sqlite   
-__pycache__/            
+keys/private.pem
+keys/key.jwk
+instance/fido.sqlite
+__pycache__/
