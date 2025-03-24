@@ -1,0 +1,52 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    "https://w3id.org/security/suites/jws-2020/v1",
+    "https://w3id.org/security/suites/ed25519-2020/v1",
+    "https://w3id.org/sd-jwt/v1"
+  ],
+  "id": "did:web:fido.moi.gov.tw",
+  "verificationMethod": [
+    {
+      "id": "did:web:fido.moi.gov.tw#key-1",
+      "type": "JsonWebKey2020",
+      "controller": "did:web:fido.moi.gov.tw",
+      "publicKeyJwk": {
+        "kty": "OKP",
+        "crv": "Ed25519",
+        "x": "9neDagofNajSSVsiIvNqQKrI83VgH2aGPYsxZMyue00",
+        "kid": "key-1"
+      }
+    }
+  ],
+  "authentication": [
+    "did:web:fido.moi.gov.tw#key-1"
+  ],
+  "assertionMethod": [
+    "did:web:fido.moi.gov.tw#key-1"
+  ],
+  "service": [
+    {
+      "id": "did:web:fido.moi.gov.tw#credential-service",
+      "type": "CredentialService",
+      "serviceEndpoint": "http://fido.moi.gov.tw/api/v1/credentials"
+    },
+    {
+      "id": "did:web:fido.moi.gov.tw#status-service",
+      "type": "CredentialStatusService",
+      "serviceEndpoint": "http://fido.moi.gov.tw/api/v1/credential-status"
+    },
+    {
+      "id": "did:web:fido.moi.gov.tw#verification-service",
+      "type": "VerificationService",
+      "serviceEndpoint": "http://fido.moi.gov.tw/api/v1/verify"
+    },
+    {
+      "id": "did:web:fido.moi.gov.tw#oid4vci-service",
+      "type": "OID4VCIService",
+      "serviceEndpoint": "http://fido.moi.gov.tw/.well-known/openid-credential-issuer"
+    }
+  ],
+  "created": "2025-03-22T15:48:08.269846Z",
+  "updated": "2025-03-22T15:48:08.269846Z"
+}

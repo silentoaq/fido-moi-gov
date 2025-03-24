@@ -1,0 +1,50 @@
+/* 全局樣式 */
+body {
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+/* 隱藏WebKit瀏覽器滾動條 (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    display: none;
+}
+
+/* 隱藏Firefox瀏覽器滾動條 */
+* {
+    scrollbar-width: none;
+}
+
+/* IE和Edge的舊版本 */
+* {
+    -ms-overflow-style: none;
+}
+
+/* 表格美化 */
+.table {
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* 卡片美化 */
+.card {
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+    background-color: rgba(0, 0, 0, 0.02);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* 按鈕美化 */
+.btn {
+    font-weight: 500;
+    border-radius: 4px;
+}
+
+/* 文本截斷 */
+.text-truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

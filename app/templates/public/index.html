@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block title %}內政部自然人憑證機構{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="h2">內政部自然人憑證機構</h1>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body d-flex flex-column">
+                            <h3 class="card-title h5">申請憑證</h3>
+                            <a href="{{ url_for('public.application_form') }}" class="btn btn-primary mt-2">立即申請</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body d-flex flex-column">
+                            <h3 class="card-title h5">查詢申請狀態</h3>
+                            <a href="{{ url_for('public.application_lookup') }}" class="btn btn-outline-primary mt-2">查詢狀態</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title h5 mb-3">申請流程</h2>
+                    <ol>
+                        <li>填寫申請表格</li>
+                        <li>掃描QR碼關聯DID</li>
+                        <li>等待審核</li>
+                        <li>掃描QR碼獲取憑證</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

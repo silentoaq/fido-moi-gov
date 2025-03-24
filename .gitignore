@@ -1,0 +1,5 @@
+# .gitignore
+keys/private.pem        
+keys/key.jwk            
+instance/fido.sqlite   
+__pycache__/            

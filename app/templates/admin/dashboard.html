@@ -1,0 +1,118 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}儀表板 - 管理後台{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <h1 class="h3 mb-4">儀表板</h1>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">待處理申請</h6>
+                            <h2 class="display-6">{{ pending_applications }}</h2>
+                        </div>
+                        <div class="bg-primary bg-opacity-25 p-3 rounded">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-hourglass-split text-primary" viewBox="0 0 16 16">
+                                <path d="M2.5 15a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.154-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.154.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1h-11zm2-13v1c0 .537.12 1.045.337 1.5h6.326c.216-.455.337-.963.337-1.5V2h-7zm3 6.35c0 .701-.478 1.236-1.011 1.492A3.5 3.5 0 0 0 4.5 13s.866-1.299 3-1.48V8.35zm1 0v3.17c2.134.181 3 1.48 3 1.48a3.5 3.5 0 0 0-1.989-3.158C8.978 9.586 8.5 9.052 8.5 8.351z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('admin.applications', status='pending') }}" class="btn btn-sm btn-outline-primary mt-3">查看申請</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">已批准申請</h6>
+                            <h2 class="display-6">{{ approved_applications }}</h2>
+                        </div>
+                        <div class="bg-success bg-opacity-25 p-3 rounded">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-check-circle text-success" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('admin.applications', status='approved') }}" class="btn btn-sm btn-outline-success mt-3">查看申請</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">有效憑證</h6>
+                            <h2 class="display-6">{{ valid_credentials }}</h2>
+                        </div>
+                        <div class="bg-info bg-opacity-25 p-3 rounded">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-card-checklist text-info" viewBox="0 0 16 16">
+                                <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
+                                <path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0zM7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('admin.credentials', status='valid') }}" class="btn btn-sm btn-outline-info mt-3">查看憑證</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">快速操作</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="{{ url_for('admin.applications', status='pending') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            處理待審核申請
+                            <span class="badge bg-primary rounded-pill">{{ pending_applications }}</span>
+                        </a>
+                        <a href="{{ url_for('admin.credentials') }}" class="list-group-item list-group-item-action">
+                            管理已發行憑證
+                        </a>
+                        <a href="{{ url_for('admin.logout') }}" class="list-group-item list-group-item-action text-danger">
+                            登出系統
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">系統資訊</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>登入用戶</span>
+                            <span class="fw-bold">{{ current_user.username }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>用戶角色</span>
+                            <span class="fw-bold">{{ current_user.role }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>上次登入</span>
+                            <span class="fw-bold">{{ current_user.last_login.strftime('%Y-%m-%d %H:%M') if current_user.last_login else '首次登入' }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

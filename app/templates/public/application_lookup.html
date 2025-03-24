@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}查詢申請 - 自然人憑證中心{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">查詢申請狀態</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('public.application_lookup') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        
+                        <div class="mb-4">
+                            <label for="application_id" class="form-label">申請ID</label>
+                            <input type="text" class="form-control" id="application_id" name="application_id" required>
+                            <div class="form-text">請輸入您申請時獲得的ID</div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">查詢</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

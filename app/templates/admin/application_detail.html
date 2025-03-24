@@ -1,0 +1,194 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}申請詳情 - 管理後台{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">申請詳情</h1>
+        <a href="{{ url_for('admin.applications') }}" class="btn btn-outline-secondary">返回列表</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">基本資料</h5>
+                    <div>
+                        {% if application.status == 'pending' %}
+                            {% if application.applicant_did %}
+                                <span class="badge bg-info">等待審核</span>
+                            {% else %}
+                                <span class="badge bg-warning">待關聯DID</span>
+                            {% endif %}
+                        {% elif application.status == 'approved' %}
+                            <span class="badge bg-success">已批准</span>
+                        {% elif application.status == 'rejected' %}
+                            <span class="badge bg-danger">已拒絕</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">申請ID</h6>
+                            <p>{{ application.id }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">申請時間</h6>
+                            <p>{{ application.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">姓名</h6>
+                            <p>{{ application.name }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">身分證字號</h6>
+                            <p>{{ application.national_id }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">出生日期</h6>
+                            <p>{{ application.birth_date.strftime('%Y-%m-%d') }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">性別</h6>
+                            <p>{{ application.gender }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">出生地</h6>
+                            <p>{{ application.birth_place }}</p>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <h6 class="text-muted">地址</h6>
+                            <p>{{ application.address }}</p>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <h6 class="text-muted">DID</h6>
+                            {% if application.applicant_did %}
+                                <p class="text-break">{{ application.applicant_did }}</p>
+                            {% else %}
+                                <p class="text-danger">尚未關聯DID</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if application.status == 'approved' %}
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0">憑證資訊</h5>
+                    </div>
+                    <div class="card-body">
+                        {% set credential = application.credentials[0] if application.credentials else None %}
+                        {% if credential %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <h6 class="text-muted">憑證ID</h6>
+                                    <p>{{ credential.id }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <h6 class="text-muted">狀態</h6>
+                                    <p>
+                                        {% if credential.status == 'valid' %}
+                                            <span class="badge bg-success">有效</span>
+                                        {% elif credential.status == 'revoked' %}
+                                            <span class="badge bg-danger">已撤銷</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <h6 class="text-muted">創建時間</h6>
+                                    <p>{{ credential.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <h6 class="text-muted">發行時間</h6>
+                                    <p>{{ credential.issued_at.strftime('%Y-%m-%d %H:%M:%S') if credential.issued_at else '尚未發行' }}</p>
+                                </div>
+
+                                {% if not credential.issued_at and credential.pre_auth_code and not credential.is_used %}
+                                    <div class="col-12">
+                                        <div class="alert alert-info">
+                                            <h6 class="alert-heading">預授權碼</h6>
+                                            <p class="mb-0">{{ credential.pre_auth_code }}</p>
+                                            <p class="mb-0 mt-2">
+                                                <small>過期時間: {{ credential.code_expires_at.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                                            </p>
+                                        </div>
+                                        <div class="d-grid gap-2">
+                                            <a href="{{ url_for('admin.credential_detail', credential_id=credential.id) }}" class="btn btn-primary">查看憑證詳情</a>
+                                            <form action="{{ url_for('admin.regenerate_code', credential_id=credential.id) }}" method="post">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button type="submit" class="btn btn-outline-secondary w-100">重新生成預授權碼</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="col-12">
+                                        <div class="d-grid">
+                                            <a href="{{ url_for('admin.credential_detail', credential_id=credential.id) }}" class="btn btn-primary">查看憑證詳情</a>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <p class="text-danger">找不到關聯的憑證記錄</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">審核操作</h5>
+                </div>
+                <div class="card-body">
+                    {% if application.status == 'pending' and application.applicant_did %}
+                        <form action="{{ url_for('admin.approve_application', application_id=application.id) }}" method="post" class="mb-3">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <div class="mb-3">
+                                <label for="approve_notes" class="form-label">審核備註</label>
+                                <textarea class="form-control" id="approve_notes" name="review_notes" rows="3"></textarea>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success">批准申請</button>
+                            </div>
+                        </form>
+
+                        <form action="{{ url_for('admin.reject_application', application_id=application.id) }}" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <div class="mb-3">
+                                <label for="reject_notes" class="form-label">拒絕原因</label>
+                                <textarea class="form-control" id="reject_notes" name="review_notes" rows="3" required></textarea>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-danger">拒絕申請</button>
+                            </div>
+                        </form>
+                    {% elif application.status == 'pending' and not application.applicant_did %}
+                        <div class="alert alert-warning">
+                            <p class="mb-0">申請人尚未關聯DID，無法進行審核</p>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading">審核資訊</h6>
+                            <p>狀態: 
+                                {% if application.status == 'approved' %}
+                                    <span class="badge bg-success">已批准</span>
+                                {% elif application.status == 'rejected' %}
+                                    <span class="badge bg-danger">已拒絕</span>
+                                {% endif %}
+                            </p>
+                            {% if application.review_notes %}
+                                <p>備註: {{ application.review_notes }}</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
