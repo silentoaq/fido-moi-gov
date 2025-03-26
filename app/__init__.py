@@ -3,6 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
+from flask_cors import CORS
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -11,6 +12,8 @@ csrf = CSRFProtect()
 def create_app(test_config=None):
     # 創建和配置應用
     app = Flask(__name__, instance_relative_config=True)
+    
+    CORS(app, resources={r"/api/*": {"origins": "*"}, r"/.well-known/*": {"origins": "*"}})
     
     app.config.from_mapping(
         SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),

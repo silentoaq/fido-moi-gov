@@ -135,34 +135,43 @@ def issue_credential():
     credential.expires_at = expires_at
     db.session.commit()
     
-    # 生成SD-JWT格式的憑證
-    credential_data = {
-        'national_id': application.national_id,
-        'name': application.name,
-        'birth_date': application.birth_date.isoformat(),
-        'gender': application.gender,
-        'address': application.address,
-        'birth_place': application.birth_place
-    }
+    try:
+        # 生成SD-JWT格式的憑證
+        credential_data = {
+            'national_id': application.national_id,
+            'name': application.name,
+            'birth_date': application.birth_date.isoformat(),
+            'gender': application.gender,
+            'address': application.address,
+            'birth_place': application.birth_place
+        }
+        
+        sd_jwt = generate_sd_jwt(
+            issuer_did="did:web:fido.moi.gov.tw",
+            subject_did=application.applicant_did,
+            credential_id=credential.credential_id,
+            credential_data=credential_data,
+            issued_at=int(issued_at.timestamp()),
+            expires_at=int(expires_at.timestamp())
+        )
+        
+        # 移除訪問令牌
+        access_tokens.pop(access_token, None)
+        
+        # 返回憑證
+        return jsonify({
+            "format": "jwt_sd",
+            "credential": sd_jwt
+        })
+    except Exception as e:
+        current_app.logger.error(f"生成憑證錯誤: {str(e)}")
+        # 輸出更多調試信息
+        print(f"生成憑證錯誤: {str(e)}")
+        print(f"申請數據: {application.to_dict()}")
+        print(f"憑證數據: {credential_data}")
+        # 返回錯誤
+        return jsonify({"error": "credential_generation_error", "details": str(e)}), 500
     
-    sd_jwt = generate_sd_jwt(
-        issuer_did="did:web:fido.moi.gov.tw",
-        subject_did=application.applicant_did,
-        credential_id=credential.credential_id,
-        credential_data=credential_data,
-        issued_at=int(issued_at.timestamp()),
-        expires_at=int(expires_at.timestamp())
-    )
-    
-    # 移除訪問令牌
-    access_tokens.pop(access_token, None)
-    
-    # 返回憑證
-    return jsonify({
-        "format": "jwt_sd",
-        "credential": sd_jwt
-    })
-
 @bp.route('/credential-status/<credential_id>', methods=['GET'])
 def credential_status(credential_id):
     """查詢憑證狀態"""
