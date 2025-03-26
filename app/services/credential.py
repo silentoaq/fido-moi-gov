@@ -77,7 +77,7 @@ def generate_sd_jwt(issuer_did, subject_did, credential_id, credential_data, iss
         "vc": {
             "type": ["VerifiableCredential", "NaturalPersonCredential"],
             "credentialStatus": {
-                "id": f"http://fido.moi.gov.tw/api/v1/credential-status/{credential_id}",
+                "id": f"https://fido.moi.gov.tw/api/v1/credential-status/{credential_id}",
                 "type": "StatusList2021Entry"
             }
         },

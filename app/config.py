@@ -28,7 +28,13 @@ class Config:
     # 允許的憑證類型
     SUPPORTED_CREDENTIAL_TYPES = ['NaturalPersonCredential']
 
-
+    # HTTPS 設置
+    USE_HTTPS = True
+    SERVER_NAME = 'fido.moi.gov.tw:5000'
+    PREFERRED_URL_SCHEME = 'https'
+    
+    # CORS設置 - 允許所有域的API和.well-known請求
+    CORS_ORIGINS = ['*']
 class DevelopmentConfig(Config):
     """開發環境配置"""
     DEBUG = True

@@ -29,22 +29,22 @@
     {
       "id": "did:web:fido.moi.gov.tw#credential-service",
       "type": "CredentialService",
-      "serviceEndpoint": "http://fido.moi.gov.tw/api/v1/credentials"
+      "serviceEndpoint": "https://fido.moi.gov.tw/api/v1/credentials"
     },
     {
       "id": "did:web:fido.moi.gov.tw#status-service",
       "type": "CredentialStatusService",
-      "serviceEndpoint": "http://fido.moi.gov.tw/api/v1/credential-status"
+      "serviceEndpoint": "https://fido.moi.gov.tw/api/v1/credential-status"
     },
     {
       "id": "did:web:fido.moi.gov.tw#verification-service",
       "type": "VerificationService",
-      "serviceEndpoint": "http://fido.moi.gov.tw/api/v1/verify"
+      "serviceEndpoint": "https://fido.moi.gov.tw/api/v1/verify"
     },
     {
       "id": "did:web:fido.moi.gov.tw#oid4vci-service",
       "type": "OID4VCIService",
-      "serviceEndpoint": "http://fido.moi.gov.tw/.well-known/openid-credential-issuer"
+      "serviceEndpoint": "https://fido.moi.gov.tw/.well-known/openid-credential-issuer"
     }
   ],
   "created": "2025-03-22T15:48:08.269846Z",

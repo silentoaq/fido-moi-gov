@@ -2,3 +2,7 @@ keys/private.pem
 keys/key.jwk
 instance/fido.sqlite
 __pycache__/
+certs/cert.pem
+certs/key.pem
+*.pyc
+
