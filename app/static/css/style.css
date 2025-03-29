@@ -1,0 +1,106 @@
+/* 臺灣自然人憑證發行系統自定義樣式 */
+
+/* 主色調 */
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #0dcaf0;
+  }
+  
+  /* 頁面整體樣式 */
+  body {
+    background-color: #f8f9fa;
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+  
+  /* 頁眉樣式 */
+  .navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* 卡片樣式增強 */
+  .card {
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* 狀態樣式 */
+  .status-pending {
+    border-left: 4px solid var(--warning-color);
+  }
+  
+  .status-approved {
+    border-left: 4px solid var(--info-color);
+  }
+  
+  .status-rejected {
+    border-left: 4px solid var(--danger-color);
+  }
+  
+  .status-issued {
+    border-left: 4px solid var(--success-color);
+  }
+  
+  /* 表格樣式增強 */
+  .table {
+    margin-bottom: 0;
+  }
+  
+  .table th {
+    font-weight: 600;
+  }
+  
+  .table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+  }
+  
+  /* 按鈕樣式優化 */
+  .btn {
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+  }
+  
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+  
+  /* QR碼樣式 */
+  #qrcode-container {
+    padding: 2rem;
+  }
+  
+  #qrcode {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* 表單樣式 */
+  .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+  
+  /* 頁腳樣式 */
+  footer {
+    margin-top: 2rem;
+    padding: 1.5rem 0;
+    color: #6c757d;
+    border-top: 1px solid #dee2e6;
+  }
+  
+  /* 響應式調整 */
+  @media (max-width: 768px) {
+    .card-body {
+      padding: 1rem;
+    }
+  }

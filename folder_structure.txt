@@ -1,0 +1,22 @@
+C:.
+|   .env
+|   .gitignore
+|   README.md
+|   requirements.txt
+|   run.py
+|   
++---.well-known
++---app
+|   |   config.py
+|   |   __init__.py
+|   |   
+|   +---models
+|   +---routes
+|   +---static
+|   +---templates
+|   |   +---admin
+|   |   \---public
+|   \---utils
++---keys
++---logs
+\---migrations

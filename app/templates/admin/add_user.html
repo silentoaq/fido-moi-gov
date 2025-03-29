@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block title %}添加用戶 - 臺灣自然人憑證發行系統{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-person-plus me-2"></i>添加新用戶</h2>
+    <div>
+        <a href="{{ url_for('admin.manage_users') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> 返回用戶列表
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">用戶資訊</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('admin.add_user') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">用戶名</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                        <div class="form-text">用戶名需唯一，用於登入系統</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">電子郵件</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                        <div class="form-text">電子郵件需唯一</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">密碼</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                        <div class="form-text">請使用強密碼，建議包含大小寫字母、數字和特殊字符</div>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="is_admin" name="is_admin">
+                        <label class="form-check-label" for="is_admin">授予管理員權限</label>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>提示：</strong> 擁有管理員權限的用戶可以管理申請、發行憑證和管理其他用戶
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">創建用戶</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

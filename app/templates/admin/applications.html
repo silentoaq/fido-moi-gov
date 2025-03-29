@@ -1,0 +1,191 @@
+{% extends "layout.html" %}
+
+{% block title %}申請管理 - 臺灣自然人憑證發行系統{% endblock %}
+
+{% block additional_head %}
+<style>
+    .status-badge {
+        min-width: 70px;
+    }
+    .filter-btn.active {
+        font-weight: bold;
+        border-color: #0d6efd;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-list-check me-2"></i>申請管理</h2>
+    <div>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-speedometer2 me-1"></i> 返回儀表板
+        </a>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">申請列表</h5>
+            <div class="btn-group" role="group">
+                <a href="{{ url_for('admin.applications', status='all') }}" class="btn btn-outline-primary filter-btn {{ 'active' if current_status == 'all' else '' }}">
+                    全部
+                </a>
+                <a href="{{ url_for('admin.applications', status='pending') }}" class="btn btn-outline-warning filter-btn {{ 'active' if current_status == 'pending' else '' }}">
+                    待審核
+                </a>
+                <a href="{{ url_for('admin.applications', status='approved') }}" class="btn btn-outline-info filter-btn {{ 'active' if current_status == 'approved' else '' }}">
+                    已核准
+                </a>
+                <a href="{{ url_for('admin.applications', status='rejected') }}" class="btn btn-outline-danger filter-btn {{ 'active' if current_status == 'rejected' else '' }}">
+                    已拒絕
+                </a>
+                <a href="{{ url_for('admin.applications', status='issued') }}" class="btn btn-outline-success filter-btn {{ 'active' if current_status == 'issued' else '' }}">
+                    已發行
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>申請ID</th>
+                        <th>申請人</th>
+                        <th>身分證字號</th>
+                        <th>申請時間</th>
+                        <th>狀態</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in applications.items %}
+                    <tr>
+                        <td class="text-muted">{{ application.id[:8] }}...</td>
+                        <td>{{ application.name }}</td>
+                        <td>{{ application.national_id }}</td>
+                        <td>{{ application.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            {% if application.status == 'pending' %}
+                            <span class="badge bg-warning text-center status-badge">待審核</span>
+                            {% elif application.status == 'approved' %}
+                            <span class="badge bg-info text-center status-badge">已核准</span>
+                            {% elif application.status == 'rejected' %}
+                            <span class="badge bg-danger text-center status-badge">已拒絕</span>
+                            {% elif application.status == 'issued' %}
+                            <span class="badge bg-success text-center status-badge">已發行</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('admin.application_detail', application_id=application.id) }}" class="btn btn-sm btn-primary">
+                                <i class="bi bi-eye me-1"></i> 查看詳情
+                            </a>
+                            
+                            {% if application.status == 'pending' %}
+                            <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#approveModal{{ application.id }}">
+                                <i class="bi bi-check-circle me-1"></i> 核准
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal{{ application.id }}">
+                                <i class="bi bi-x-circle me-1"></i> 拒絕
+                            </button>
+                            
+                            <!-- 核准確認彈窗 -->
+                            <div class="modal fade" id="approveModal{{ application.id }}" tabindex="-1" aria-labelledby="approveModalLabel{{ application.id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="approveModalLabel{{ application.id }}">確認核准申請</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form action="{{ url_for('admin.application_review', application_id=application.id) }}" method="POST">
+                                            <div class="modal-body">
+                                                <p>您確定要核准「{{ application.name }}」的申請嗎？</p>
+                                                <div class="mb-3">
+                                                    <label for="comment{{ application.id }}" class="form-label">審核意見（選填）：</label>
+                                                    <textarea class="form-control" id="comment{{ application.id }}" name="comment" rows="3"></textarea>
+                                                </div>
+                                                <input type="hidden" name="decision" value="approve">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                                <button type="submit" class="btn btn-success">確認核准</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 拒絕確認彈窗 -->
+                            <div class="modal fade" id="rejectModal{{ application.id }}" tabindex="-1" aria-labelledby="rejectModalLabel{{ application.id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="rejectModalLabel{{ application.id }}">確認拒絕申請</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form action="{{ url_for('admin.application_review', application_id=application.id) }}" method="POST">
+                                            <div class="modal-body">
+                                                <p>您確定要拒絕「{{ application.name }}」的申請嗎？</p>
+                                                <div class="mb-3">
+                                                    <label for="rejectComment{{ application.id }}" class="form-label">拒絕原因（必填）：</label>
+                                                    <textarea class="form-control" id="rejectComment{{ application.id }}" name="comment" rows="3" required></textarea>
+                                                </div>
+                                                <input type="hidden" name="decision" value="reject">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                                <button type="submit" class="btn btn-danger">確認拒絕</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            <div class="text-muted">
+                                <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                目前沒有符合條件的申請記錄
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    {% if applications.pages > 1 %}
+    <div class="card-footer">
+        <nav aria-label="申請列表分頁">
+            <ul class="pagination justify-content-center mb-0">
+                <li class="page-item {{ 'disabled' if applications.page == 1 else '' }}">
+                    <a class="page-link" href="{{ url_for('admin.applications', status=current_status, page=applications.prev_num) if applications.has_prev else '#' }}">上一頁</a>
+                </li>
+                
+                {% for page_num in applications.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if page_num %}
+                        <li class="page-item {{ 'active' if page_num == applications.page else '' }}">
+                            <a class="page-link" href="{{ url_for('admin.applications', status=current_status, page=page_num) }}">{{ page_num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                <li class="page-item {{ 'disabled' if applications.page == applications.pages else '' }}">
+                    <a class="page-link" href="{{ url_for('admin.applications', status=current_status, page=applications.next_num) if applications.has_next else '#' }}">下一頁</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

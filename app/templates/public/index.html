@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+
+{% block title %}首頁 - 臺灣自然人憑證發行系統{% endblock %}
+
+{% block content %}
+<div class="row mt-5">
+    <div class="col-md-8 offset-md-2 text-center">
+        <h1 class="display-4 mb-4">臺灣自然人憑證發行系統</h1>
+        <p class="lead">歡迎使用基於去中心化身份的臺灣自然人憑證發行系統。</p>
+        
+        <div class="card mt-5">
+            <div class="card-body">
+                <h2 class="card-title">什麼是自然人憑證？</h2>
+                <p class="card-text">
+                    自然人憑證是一種數位身份證明，可用於各種線上服務的身份驗證。本系統基於去中心化身份（DID）
+                    和可驗證憑證（VC）技術，讓您完全掌控自己的數位身份。
+                </p>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-body">
+                <h2 class="card-title">如何申請？</h2>
+                <p class="card-text">
+                    申請流程簡單快捷：
+                </p>
+                <ol class="text-start">
+                    <li>點擊「申請憑證」按鈕</li>
+                    <li>使用您的數位錢包掃描QR碼</li>
+                    <li>填寫必要的身份資訊</li>
+                    <li>等待審核通過</li>
+                    <li>在您的數位錢包中接收憑證</li>
+                </ol>
+                
+                <div class="mt-4">
+                    <a href="{{ url_for('public.credential_offer') }}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-qr-code me-2"></i> 申請憑證
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-body">
+                <h2 class="card-title">技術特點</h2>
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <div class="d-flex flex-column align-items-center">
+                            <i class="bi bi-shield-lock fs-1 text-primary mb-2"></i>
+                            <h5>安全可靠</h5>
+                            <p class="text-center">基於密碼學技術，確保憑證不可偽造</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex flex-column align-items-center">
+                            <i class="bi bi-person-lock fs-1 text-primary mb-2"></i>
+                            <h5>保護隱私</h5>
+                            <p class="text-center">支持選擇性披露，保護您的個人資訊</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex flex-column align-items-center">
+                            <i class="bi bi-diagram-3 fs-1 text-primary mb-2"></i>
+                            <h5>去中心化</h5>
+                            <p class="text-center">基於DID技術，實現自主身份管理</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,19 +1,92 @@
+# 臺灣自然人憑證發行系統（Issuer）
 
-# 系統架構與發行流程
+這是基於去中心化身份（DID）和可驗證憑證（VC）技術開發的臺灣自然人憑證發行系統，遵循 OpenID for Verifiable Credential Issuance (OID4VCI) 標準。
 
-## 系統環境
-- Windows
+## 系統功能
+
+- 提供 did:web 格式的去中心化身份
+- 支援 SD-JWT 格式的可驗證憑證
+- 實現選擇性披露，保護用戶隱私
+- 符合 OID4VCI 標準的憑證發行流程
+- 管理員手動審核機制
+- 憑證狀態查詢與撤銷功能
 
 ## 技術棧
-- **後端**：Python 3.11 + Flask + Jinja2（用於 Issuer 部分）
-- **伺服器**：Nginx（反向代理和 HTTPS）
-- **安全**：OpenSSL（生成自簽名憑證）
-- **通訊協議**：DIDComm（用於安全通訊）
-- **憑證發行協議**：自定義的 OID4VCI 實現，結合 DIDComm 進行通訊
-- **VC 格式**：SD-JWT（Selective Disclosure JSON Web Token）
-- **網域設置**：通過修改 `C:\Windows\System32\drivers\etc\hosts` 設置網域
 
-## 發行流程
-1. 用戶通過數位皮夾向 Issuer 發送憑證請求（包含 DID 和簽名），使用 DIDComm。
-2. Issuer 驗證簽名，生成 SD-JWT 格式的 VC（包含所有屬性和選擇性披露選項）。
-3. Issuer 通過 DIDComm 將 VC 傳回數位皮夾。
+- **Flask**: Web框架
+- **SQLAlchemy**: ORM資料庫
+- **PyJWT**: JWT處理
+- **Cryptography**: 加密操作
+- **Bootstrap 5**: 前端UI
+- **QRCode.js**: QR碼生成
+
+## 安裝與運行
+
+### 環境需求
+
+- Python 3.9+
+- Windows 10 (可在其他平台上運行，但開發環境為Windows)
+
+### 安裝步驟
+
+1. 克隆本倉庫：
+```
+git clone [https://github.com/silentoaq/fido-moi-gov.git]
+cd [fido-moi-gov]
+```
+
+2. 創建並激活虛擬環境：
+```
+conda create -n issuer python=3.11
+conda activate issuer
+```
+
+3. 安裝依賴：
+```
+pip install -r requirements.txt
+```
+
+4. 初始化資料庫：
+```
+flask db init
+flask db migrate -m "Initial migration."
+flask db upgrade
+```
+
+5. 創建管理員帳號：
+```
+flask shell
+>>> from app import db
+>>> from app.models.user import User
+>>> admin = User(username='admin', email='admin@example.com', is_admin=True)
+>>> admin.set_password('password')
+>>> db.session.add(admin)
+>>> db.session.commit()
+>>> exit()
+```
+
+6. 運行應用：
+```
+python run.py
+```
+
+## 系統架構
+
+- **public**: 公開路由，處理DID文檔、憑證發行等
+- **admin**: 管理員路由，處理申請審核、憑證管理等
+- **models**: 數據模型，定義資料庫結構
+- **utils**: 工具函數，處理JWT、DID等功能
+- **templates**: 前端模板
+
+## OID4VCI 端點
+
+- **/.well-known/did.json**: DID 文檔端點
+- **/.well-known/openid-credential-issuer**: 發行者元數據端點
+- **/.well-known/jwks.json**: JSON Web Key Set 端點
+- **/token**: 訪問令牌端點
+- **/credential**: 憑證發行端點
+- **/credential-status/{id}**: 憑證狀態端點
+
+## 開發者
+
+這是一個大學專題專案，由 [11110109] 開發。

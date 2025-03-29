@@ -1,0 +1,297 @@
+{% extends "layout.html" %}
+
+{% block title %}申請詳情 - 臺灣自然人憑證發行系統{% endblock %}
+
+{% block additional_head %}
+<style>
+    .detail-label {
+        font-weight: bold;
+        color: #555;
+    }
+    
+    .status-panel {
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    
+    .status-pending {
+        background-color: #fff3cd;
+        border-left: 5px solid #ffc107;
+    }
+    
+    .status-approved {
+        background-color: #d1ecf1;
+        border-left: 5px solid #17a2b8;
+    }
+    
+    .status-rejected {
+        background-color: #f8d7da;
+        border-left: 5px solid #dc3545;
+    }
+    
+    .status-issued {
+        background-color: #d4edda;
+        border-left: 5px solid #28a745;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-file-earmark-text me-2"></i>申請詳情</h2>
+    <div>
+        <a href="{{ url_for('admin.applications') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> 返回申請列表
+        </a>
+    </div>
+</div>
+
+<!-- 狀態面板 -->
+<div class="status-panel status-{{ application.status }}">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="mb-1">
+                {% if application.status == 'pending' %}
+                <i class="bi bi-hourglass-split me-2"></i>待審核
+                {% elif application.status == 'approved' %}
+                <i class="bi bi-check-circle me-2"></i>已核准
+                {% elif application.status == 'rejected' %}
+                <i class="bi bi-x-circle me-2"></i>已拒絕
+                {% elif application.status == 'issued' %}
+                <i class="bi bi-award me-2"></i>已發行憑證
+                {% endif %}
+            </h4>
+            <p class="mb-0">
+                {% if application.status == 'pending' %}
+                此申請等待您的審核決定。
+                {% elif application.status == 'approved' %}
+                此申請已核准，等待用戶領取憑證。
+                {% elif application.status == 'rejected' %}
+                此申請已被拒絕。
+                {% elif application.status == 'issued' %}
+                憑證已成功發行給用戶。
+                {% endif %}
+            </p>
+        </div>
+        <div>
+            {% if application.status == 'pending' %}
+            <button type="button" class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#approveModal">
+                <i class="bi bi-check-circle me-1"></i> 核准申請
+            </button>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                <i class="bi bi-x-circle me-1"></i> 拒絕申請
+            </button>
+            {% elif application.status == 'approved' %}
+            <span class="badge bg-info text-white p-2">
+                <i class="bi bi-clock me-1"></i> 核准於 {{ application.approved_at.strftime('%Y-%m-%d %H:%M') }}
+            </span>
+            {% elif application.status == 'rejected' %}
+            <span class="badge bg-danger text-white p-2">
+                <i class="bi bi-x-octagon me-1"></i> 拒絕於 {{ application.approved_at.strftime('%Y-%m-%d %H:%M') if application.approved_at else '未記錄時間' }}
+            </span>
+            {% elif application.status == 'issued' %}
+            <a href="{{ url_for('admin.issued_credentials') }}?id={{ application.credential_id }}" class="btn btn-outline-success">
+                <i class="bi bi-credit-card me-1"></i> 查看憑證
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- 基本資訊 -->
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">基本資訊</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-3 detail-label">申請ID</div>
+                    <div class="col-md-9">{{ application.id }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-3 detail-label">申請時間</div>
+                    <div class="col-md-9">{{ application.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-3 detail-label">姓名</div>
+                    <div class="col-md-9">{{ application.name }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-3 detail-label">出生日期</div>
+                    <div class="col-md-9">{{ application.birth_date.strftime('%Y-%m-%d') }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-3 detail-label">身分證字號</div>
+                    <div class="col-md-9">{{ application.national_id }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 detail-label">持有者DID</div>
+                    <div class="col-md-9 text-break">{{ application.holder_did }}</div>
+                </div>
+            </div>
+        </div>
+        
+        {% if application.reviewer_comment %}
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">審核意見</h5>
+            </div>
+            <div class="card-body">
+                <p>{{ application.reviewer_comment }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- 審核歷史與操作 -->
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">申請狀態追蹤</h5>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <span class="badge rounded-pill bg-success">1</span>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">申請提交</h6>
+                                <small class="text-muted">{{ application.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <li class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                {% if application.status == 'pending' %}
+                                <span class="badge rounded-pill bg-secondary">2</span>
+                                {% else %}
+                                <span class="badge rounded-pill bg-success">2</span>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h6 class="mb-0">審核階段</h6>
+                                {% if application.status == 'pending' %}
+                                <small class="text-warning">等待審核</small>
+                                {% elif application.status == 'approved' %}
+                                <small class="text-info">已核准 - {{ application.approved_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                {% elif application.status == 'rejected' %}
+                                <small class="text-danger">已拒絕 - {{ application.approved_at.strftime('%Y-%m-%d %H:%M') if application.approved_at else '未記錄時間' }}</small>
+                                {% else %}
+                                <small class="text-info">已核准 - {{ application.approved_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <li class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                {% if application.status == 'issued' %}
+                                <span class="badge rounded-pill bg-success">3</span>
+                                {% else %}
+                                <span class="badge rounded-pill bg-secondary">3</span>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h6 class="mb-0">憑證發行</h6>
+                                {% if application.status == 'issued' %}
+                                <small class="text-success">已發行憑證</small>
+                                {% elif application.status == 'approved' %}
+                                <small class="text-muted">等待用戶領取</small>
+                                {% else %}
+                                <small class="text-muted">尚未發行</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        {% if application.status == 'approved' and application.pre_auth_codes %}
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">領取資訊</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3">已生成以下預授權碼供用戶領取憑證：</p>
+                {% for pre_auth in application.pre_auth_codes %}
+                {% if pre_auth.is_used == False and pre_auth.expires_at > now %}
+                <div class="alert alert-info">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>預授權碼：</strong> 
+                            <span class="font-monospace">{{ pre_auth.code[:10] }}...</span>
+                        </div>
+                        <div>
+                            <small class="text-muted">過期時間：{{ pre_auth.expires_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- 核准確認彈窗 -->
+<div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="approveModalLabel">確認核准申請</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('admin.application_review', application_id=application.id) }}" method="POST">
+                <div class="modal-body">
+                    <p>您確定要核准「{{ application.name }}」的申請嗎？</p>
+                    <div class="mb-3">
+                        <label for="comment" class="form-label">審核意見（選填）：</label>
+                        <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+                    </div>
+                    <input type="hidden" name="decision" value="approve">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-success">確認核准</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 拒絕確認彈窗 -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rejectModalLabel">確認拒絕申請</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('admin.application_review', application_id=application.id) }}" method="POST">
+                <div class="modal-body">
+                    <p>您確定要拒絕「{{ application.name }}」的申請嗎？</p>
+                    <div class="mb-3">
+                        <label for="rejectComment" class="form-label">拒絕原因（必填）：</label>
+                        <textarea class="form-control" id="rejectComment" name="comment" rows="3" required></textarea>
+                    </div>
+                    <input type="hidden" name="decision" value="reject">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-danger">確認拒絕</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

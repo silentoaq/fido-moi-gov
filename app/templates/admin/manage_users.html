@@ -1,0 +1,134 @@
+{% extends "layout.html" %}
+
+{% block title %}管理用戶 - 臺灣自然人憑證發行系統{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-people me-2"></i>用戶管理</h2>
+    <div>
+        <a href="{{ url_for('admin.add_user') }}" class="btn btn-success me-2">
+            <i class="bi bi-person-plus me-1"></i> 添加用戶
+        </a>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-speedometer2 me-1"></i> 返回儀表板
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-light">
+        <h5 class="card-title mb-0">系統用戶列表</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>用戶名</th>
+                        <th>電子郵件</th>
+                        <th>創建時間</th>
+                        <th>角色</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            {% if user.is_admin %}
+                            <span class="badge bg-primary">管理員</span>
+                            {% else %}
+                            <span class="badge bg-secondary">一般用戶</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ user.id }}">
+                                <i class="bi bi-pencil me-1"></i> 編輯
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ user.id }}">
+                                <i class="bi bi-trash me-1"></i> 刪除
+                            </button>
+                            
+                            <!-- 編輯用戶彈窗 -->
+                            <div class="modal fade" id="editModal{{ user.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ user.id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editModalLabel{{ user.id }}">編輯用戶</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form action="{{ url_for('admin.edit_user', user_id=user.id) }}" method="POST">
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label for="username{{ user.id }}" class="form-label">用戶名</label>
+                                                    <input type="text" class="form-control" id="username{{ user.id }}" name="username" value="{{ user.username }}" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="email{{ user.id }}" class="form-label">電子郵件</label>
+                                                    <input type="email" class="form-control" id="email{{ user.id }}" name="email" value="{{ user.email }}" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="password{{ user.id }}" class="form-label">密碼 (留空表示不變更)</label>
+                                                    <input type="password" class="form-control" id="password{{ user.id }}" name="password">
+                                                </div>
+                                                <div class="mb-3 form-check">
+                                                    <input type="checkbox" class="form-check-input" id="isAdmin{{ user.id }}" name="is_admin" {{ 'checked' if user.is_admin else '' }}>
+                                                    <label class="form-check-label" for="isAdmin{{ user.id }}">管理員權限</label>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                                <button type="submit" class="btn btn-primary">保存變更</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 刪除用戶彈窗 -->
+                            <div class="modal fade" id="deleteModal{{ user.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ user.id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel{{ user.id }}">確認刪除用戶</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="alert alert-danger">
+                                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                                <strong>警告：</strong> 此操作無法撤銷！
+                                            </div>
+                                            <p>您確定要刪除用戶「{{ user.username }}」嗎？</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                            <form action="{{ url_for('admin.delete_user', user_id=user.id) }}" method="POST" class="d-inline">
+                                                <button type="submit" class="btn btn-danger">確認刪除</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            <div class="text-muted">
+                                <i class="bi bi-people-fill fs-3 d-block mb-2"></i>
+                                尚未創建任何用戶
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

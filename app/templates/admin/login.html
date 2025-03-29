@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}管理員登入 - 臺灣自然人憑證發行系統{% endblock %}
+
+{% block content %}
+<div class="row mt-5">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">管理員登入</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin.login') }}">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">使用者名稱</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">密碼</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">登入</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
